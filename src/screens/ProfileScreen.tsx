@@ -1,18 +1,23 @@
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '../components/Avatar';
+import { FloatingTabBar } from '../components/FloatingTabBar';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { PrivacyNoticeModal } from '../components/PrivacyNoticeModal';
 import { TextField } from '../components/TextField';
 import { useAuth } from '../context/AuthContext';
+import type { RootStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { fonts } from '../theme/typography';
 import { compressToUnder200KB } from '../utils/image';
 
-export function ProfileScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, 'Profil'>;
+
+export function ProfileScreen({ navigation }: Props) {
   const { session, profile, signOut, updateProfile } = useAuth();
   const [editing, setEditing] = useState(false);
   const [firstName, setFirstName] = useState(profile?.first_name ?? '');
@@ -141,6 +146,7 @@ export function ProfileScreen() {
       </ScrollView>
       </KeyboardAvoidingView>
       <PrivacyNoticeModal visible={privacyModalVisible} onClose={() => setPrivacyModalVisible(false)} />
+      <FloatingTabBar active="Profil" navigation={navigation} />
     </SafeAreaView>
   );
 }
@@ -156,6 +162,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 24,
     paddingTop: 32,
+    paddingBottom: 96,
     alignItems: 'center',
   },
   title: {
