@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useRef } from 'react';
 import type { NavigationContainerRef } from '@react-navigation/native';
 
+import { AyarlarScreen } from '../screens/AyarlarScreen';
 import { GrubaKatilScreen } from '../screens/GrubaKatilScreen';
 import { GrupAnaSayfaScreen } from '../screens/GrupAnaSayfaScreen';
 import { GrupAyarlariScreen } from '../screens/GrupAyarlariScreen';
@@ -44,6 +45,7 @@ export function AppNavigator({
       <Stack.Screen name="GrupAnaSayfa" component={GrupAnaSayfaScreen} options={{ title: 'Grup' }} />
       <Stack.Screen name="GrupAyarlari" component={GrupAyarlariScreen} options={{ title: 'Grup ayarları' }} />
       <Stack.Screen name="Profil" component={ProfileScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Ayarlar" component={AyarlarScreen} options={{ title: 'Ayarlar' }} />
     </Stack.Navigator>
   );
 }

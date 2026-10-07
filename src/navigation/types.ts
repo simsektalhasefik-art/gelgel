@@ -5,4 +5,5 @@ export type RootStackParamList = {
   GrupAnaSayfa: { groupId: string };
   GrupAyarlari: { groupId: string };
   Profil: undefined;
+  Ayarlar: undefined;
 };

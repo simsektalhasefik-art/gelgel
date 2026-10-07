@@ -1,6 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { EyeIcon } from '../components/EyeIcon';
 import { FormScreen } from '../components/FormScreen';
@@ -10,6 +10,7 @@ import { TextField } from '../components/TextField';
 import { useAuth } from '../context/AuthContext';
 import { colors } from '../theme/colors';
 import { fonts } from '../theme/typography';
+import { showAppAlert } from '../ui/dialog';
 import { compressToUnder200KB } from '../utils/image';
 
 export function SignUpScreen({ onNavigateToLogin }: { onNavigateToLogin: () => void }) {
@@ -50,7 +51,7 @@ export function SignUpScreen({ onNavigateToLogin }: { onNavigateToLogin: () => v
   const pickFromCamera = async () => {
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('İzin gerekli', 'Fotoğraf çekmek için kamera izni vermelisin.');
+      showAppAlert('İzin gerekli', 'Fotoğraf çekmek için kamera izni vermelisin.');
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -68,7 +69,7 @@ export function SignUpScreen({ onNavigateToLogin }: { onNavigateToLogin: () => v
   const pickFromGallery = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('İzin gerekli', 'Galeriden seçmek için izin vermelisin.');
+      showAppAlert('İzin gerekli', 'Galeriden seçmek için izin vermelisin.');
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -84,7 +85,7 @@ export function SignUpScreen({ onNavigateToLogin }: { onNavigateToLogin: () => v
   };
 
   const handlePickAvatar = () => {
-    Alert.alert('Profil fotoğrafı', 'Fotoğrafını nasıl eklemek istersin?', [
+    showAppAlert('Profil fotoğrafı', 'Fotoğrafını nasıl eklemek istersin?', [
       { text: 'Kameradan çek', onPress: pickFromCamera },
       { text: 'Galeriden seç', onPress: pickFromGallery },
       { text: 'Vazgeç', style: 'cancel' },

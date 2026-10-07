@@ -19,6 +19,8 @@ import type { RootStackParamList } from './src/navigation/types';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { SignUpScreen } from './src/screens/SignUpScreen';
 import { colors } from './src/theme/colors';
+import { DialogHost } from './src/ui/dialog';
+import { ToastHost } from './src/ui/toast';
 
 type AuthScreen = 'login' | 'signup';
 
@@ -89,6 +91,8 @@ export default function App() {
           <RootContent navigationRef={navigationRef} />
         </NavigationContainer>
       </AuthProvider>
+      <ToastHost />
+      <DialogHost />
       <StatusBar style="dark" />
     </SafeAreaProvider>
   );

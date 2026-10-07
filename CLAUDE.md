@@ -41,6 +41,7 @@ Tüm gereksinimler `docs/gelgel-belgeleri.md` dosyasındadır. Bölüm numaralar
 - Uygulama hiçbir para hareketine aracılık etmez; ödeme veya bağış alma kodu yazma.
 - Sağlık bilgisi, mazeret belgesi veya koordinat SAKLAMA (Bölüm 2, KVKK).
 - Renkler, logo ve yazı karakteri için docs/tasarim/marka-kilavuzu.md dosyasına uy; renk kodlarını oradan al.
+- Sistem Alert.alert pencereleri kullanılmaz; tüm uyarı, onay ve bilgi mesajları uygulamanın tema uyumlu bileşeniyle gösterilir (src/ui/dialog.tsx: showAppAlert, kısa bilgi mesajları için src/ui/toast.tsx: showToast). Tüm ekranlar güvenli alanı hesaba katar.
 - Tasarım: Ekran yazan her fazın başında docs/tasarim klasörüne bak. O ekranın kendi tasarım dosyası varsa ona uy. Yoksa ekranı docs/tasarim/referans-arayuz.jpeg görselindeki düzenden ilhamla, marka kılavuzundaki renklerle tasarla (Bölüm 4, "Arayüz referansı"). Referansın yeşil renklerini asla kullanma; Gelgel paletine çevir.
 - Logo: Faz 6'nın başında docs/tasarim/logo.png dosyasına bak. Yoksa kullanıcıdan iste; logo gelene kadar geçici bir ikon kullan ve bunu docs/ilerleme.md'ye eksik olarak yaz.
 - Arayüz metinleri Türkçe ve sıcak tonda (Bölüm 4). "Ceza" kelimesi arayüzde kullanılmaz.

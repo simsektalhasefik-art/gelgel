@@ -1,31 +1,32 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
-import { Alert, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '../components/Avatar';
+import { CircleIconButton } from '../components/CircleIconButton';
 import { FloatingTabBar } from '../components/FloatingTabBar';
+import { GearIcon } from '../components/GearIcon';
 import { PrimaryButton } from '../components/PrimaryButton';
-import { PrivacyNoticeModal } from '../components/PrivacyNoticeModal';
 import { TextField } from '../components/TextField';
 import { useAuth } from '../context/AuthContext';
 import type { RootStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { fonts } from '../theme/typography';
+import { showAppAlert } from '../ui/dialog';
 import { compressToUnder200KB } from '../utils/image';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Profil'>;
 
 export function ProfileScreen({ navigation }: Props) {
-  const { session, profile, signOut, updateProfile } = useAuth();
+  const { session, profile, updateProfile } = useAuth();
   const [editing, setEditing] = useState(false);
   const [firstName, setFirstName] = useState(profile?.first_name ?? '');
   const [lastName, setLastName] = useState(profile?.last_name ?? '');
   const [newAvatarUri, setNewAvatarUri] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [privacyModalVisible, setPrivacyModalVisible] = useState(false);
 
   const startEditing = () => {
     setFirstName(profile?.first_name ?? '');
@@ -38,7 +39,7 @@ export function ProfileScreen({ navigation }: Props) {
   const pickFromCamera = async () => {
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('İzin gerekli', 'Fotoğraf çekmek için kamera izni vermelisin.');
+      showAppAlert('İzin gerekli', 'Fotoğraf çekmek için kamera izni vermelisin.');
       return;
     }
     const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.9 });
@@ -50,7 +51,7 @@ export function ProfileScreen({ navigation }: Props) {
   const pickFromGallery = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('İzin gerekli', 'Galeriden seçmek için izin vermelisin.');
+      showAppAlert('İzin gerekli', 'Galeriden seçmek için izin vermelisin.');
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.9 });
@@ -60,7 +61,7 @@ export function ProfileScreen({ navigation }: Props) {
   };
 
   const handlePickAvatar = () => {
-    Alert.alert('Profil fotoğrafı', 'Fotoğrafını nasıl değiştirmek istersin?', [
+    showAppAlert('Profil fotoğrafı', 'Fotoğrafını nasıl değiştirmek istersin?', [
       { text: 'Kameradan çek', onPress: pickFromCamera },
       { text: 'Galeriden seç', onPress: pickFromGallery },
       { text: 'Vazgeç', style: 'cancel' },
@@ -91,7 +92,11 @@ export function ProfileScreen({ navigation }: Props) {
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Profilim</Text>
+        <View style={styles.header}>
+          <View style={styles.headerSpacer} />
+          <Text style={styles.title}>Profilim</Text>
+          <CircleIconButton icon={<GearIcon />} onPress={() => navigation.navigate('Ayarlar')} />
+        </View>
 
         <Pressable
           style={styles.avatarWrap}
@@ -132,20 +137,8 @@ export function ProfileScreen({ navigation }: Props) {
             </Pressable>
           </View>
         )}
-
-        {!editing && (
-          <>
-            <Pressable style={styles.linkWrap} onPress={() => setPrivacyModalVisible(true)}>
-              <Text style={styles.linkText}>Aydınlatma metnini oku</Text>
-            </Pressable>
-            <Pressable style={styles.signOutButton} onPress={signOut}>
-              <Text style={styles.signOutText}>Çıkış yap</Text>
-            </Pressable>
-          </>
-        )}
       </ScrollView>
       </KeyboardAvoidingView>
-      <PrivacyNoticeModal visible={privacyModalVisible} onClose={() => setPrivacyModalVisible(false)} />
       <FloatingTabBar active="Profil" navigation={navigation} />
     </SafeAreaView>
   );
@@ -161,15 +154,24 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 24,
-    paddingTop: 32,
+    paddingTop: 16,
     paddingBottom: 96,
     alignItems: 'center',
+  },
+  header: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  headerSpacer: {
+    width: 40,
   },
   title: {
     fontSize: 24,
     fontFamily: fonts.heading,
     color: colors.teal,
-    marginBottom: 24,
   },
   avatarWrap: {
     alignItems: 'center',
@@ -236,13 +238,5 @@ const styles = StyleSheet.create({
   linkText: {
     color: colors.textSecondary,
     fontFamily: fonts.bodySemiBold,
-  },
-  signOutButton: {
-    marginTop: 36,
-  },
-  signOutText: {
-    color: colors.textSecondary,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 15,
   },
 });

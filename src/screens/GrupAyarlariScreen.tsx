@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -17,6 +17,8 @@ import type { GroupMember } from '../lib/groups';
 import type { RootStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import { fonts } from '../theme/typography';
+import { showAppAlert } from '../ui/dialog';
+import { showToast } from '../ui/toast';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GrupAyarlari'>;
 
@@ -50,7 +52,7 @@ export function GrupAyarlariScreen({ navigation, route }: Props) {
   const isAdmin = myRole === 'yonetici';
 
   const handleTransfer = (member: GroupMember) => {
-    Alert.alert(
+    showAppAlert(
       'Yöneticiliği devret',
       `${member.first_name} ${member.last_name} grubun yeni yöneticisi olsun mu?`,
       [
@@ -62,8 +64,9 @@ export function GrupAyarlariScreen({ navigation, route }: Props) {
             try {
               await transferGroupAdmin(groupId, member.user_id);
               await load();
+              showToast('Yöneticilik devredildi.');
             } catch (e) {
-              Alert.alert('Olmadı', e instanceof Error ? e.message : 'Devredilemedi.');
+              showAppAlert('Olmadı', e instanceof Error ? e.message : 'Devredilemedi.');
             } finally {
               setBusy(false);
             }
@@ -74,7 +77,7 @@ export function GrupAyarlariScreen({ navigation, route }: Props) {
   };
 
   const handleRegenerateCode = () => {
-    Alert.alert('Davet kodunu yenile', 'Eski kod geçersiz olur, bunu bilerek devam et.', [
+    showAppAlert('Davet kodunu yenile', 'Eski kod geçersiz olur, bunu bilerek devam et.', [
       { text: 'Vazgeç', style: 'cancel' },
       {
         text: 'Yenile',
@@ -82,9 +85,9 @@ export function GrupAyarlariScreen({ navigation, route }: Props) {
           setBusy(true);
           try {
             const newCode = await regenerateInviteCode(groupId);
-            Alert.alert('Yeni davet kodu', newCode);
+            showAppAlert('Yeni davet kodu', newCode);
           } catch (e) {
-            Alert.alert('Olmadı', e instanceof Error ? e.message : 'Kod yenilenemedi.');
+            showAppAlert('Olmadı', e instanceof Error ? e.message : 'Kod yenilenemedi.');
           } finally {
             setBusy(false);
           }
@@ -94,7 +97,7 @@ export function GrupAyarlariScreen({ navigation, route }: Props) {
   };
 
   const handleLeave = () => {
-    Alert.alert('Gruptan ayrıl', 'Bu gruptan ayrılmak istediğine emin misin?', [
+    showAppAlert('Gruptan ayrıl', 'Bu gruptan ayrılmak istediğine emin misin?', [
       { text: 'Vazgeç', style: 'cancel' },
       {
         text: 'Ayrıl',
@@ -104,8 +107,9 @@ export function GrupAyarlariScreen({ navigation, route }: Props) {
           try {
             await leaveGroup(groupId);
             navigation.navigate('Gruplarim');
+            showToast('Gruptan ayrıldın.');
           } catch (e) {
-            Alert.alert('Olmadı', e instanceof Error ? e.message : 'Ayrılamadın.');
+            showAppAlert('Olmadı', e instanceof Error ? e.message : 'Ayrılamadın.');
           } finally {
             setBusy(false);
           }

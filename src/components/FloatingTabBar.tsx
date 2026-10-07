@@ -1,5 +1,6 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { RootStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
@@ -11,8 +12,12 @@ type Props = {
 };
 
 export function FloatingTabBar({ active, navigation }: Props) {
+  // Android'in alt sistem çubuğu (gesture bar) ile çakışmaması için güvenli alanı
+  // kendi hesaplıyoruz; ebeveyn SafeAreaView'in dolgusuna güvenmiyoruz çünkü
+  // position:absolute öğeler o dolguyu dikkate almayabiliyor.
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.wrap} pointerEvents="box-none">
+    <View style={[styles.wrap, { bottom: insets.bottom + 16 }]} pointerEvents="box-none">
       <View style={styles.bar}>
         <Pressable
           style={[styles.tab, active === 'Gruplarim' && styles.tabActive]}
@@ -36,7 +41,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 24,
     alignItems: 'center',
   },
   bar: {
