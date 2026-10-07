@@ -68,6 +68,7 @@ Uygulama, arkadaş gruplarının ve STK ekiplerinin mutat buluşmalarına (sohbe
 - Mazeret oylaması eşit biterse kararı yönetici verir. Grup iki mazeretsiz devamsızlık eşiği belirler: arka arkaya (ör. 3) ve toplam (ör. 5). Hangisi önce dolarsa o geçerlidir. Eşiğe bir devamsızlık kala üye ve yönetici uyarılır; eşiğe ulaşınca yönetici onaylarsa üye gruptan çıkarılır, açık borcu için ayrılan borçlu kuralı geçerlidir.
 - Yönetici gruptan ayrılmadan önce yöneticiliği bir üyeye devretmek zorundadır. Devretmeden hesabını silerse yöneticilik gruptaki en eski üyeye geçer.
 - Üye hatırlatma bildirimlerini azaltabilir ya da kapatabilir. Yoklama ("Geldim") bildirimi bu ayardan etkilenmez.
+- Yönetici, tek bir buluşma için gruptan bir üyeyi "Bu haftanın sorumlusu" atayabilir (buluşma detayından). Sorumlu sadece o buluşmada: yedek QR'ı gösterebilir, o haftanın buluşma yerini/saatini "sadece bu hafta" değiştirebilir, katılım listesini görür. Grup kurallarını değiştiremez, üye çıkaramaz, yöneticiliği devralamaz, kimsenin yoklamasını elle değiştiremez. Buluşma kapanınca sorumluluk kendiliğinden düşer (bir sonraki haftanın sorumlusu yoktur, yeniden atanması gerekir).
 
 ## 2. Teknik Gereksinim Belgesi
 
@@ -79,7 +80,7 @@ Uygulama Expo (React Native) ile tek kodla iOS ve Android için yazılır, arka 
 | Kimlik doğrulama | Supabase Auth | Pilotta e-posta ve şifreyle giriş; mağaza aşamasında Apple ile giriş (ve istenirse telefonla giriş) eklenir |
 | Veritabanı | Supabase (PostgreSQL) | Gruplar, buluşmalar, yoklama, borçlar; satır düzeyi güvenlik (RLS) ile korunur |
 | Dosya depolama | Supabase Storage (ücretsiz planda 1 GB) | İkram fotoğrafları, dekont görüntüleri |
-| Bildirimler | Expo Notifications (telefonda zamanlanan yerel bildirimler) + uygulama içi bildirim listesi | Buluşma hatırlatmaları yerel bildirimle; borç ve onay istekleri uygulama içi listede |
+| Bildirimler | Telefonun kendi takvimi (expo-calendar/legacy) + uygulama içi bildirim listesi | expo-notifications Android'de Expo Go'da çalışmadığı için buluşma hatırlatmaları "Takvimime ekle" butonuyla telefonun takvimine tekrarlayan etkinlik olarak ekleniyor (1 gün ve 2 saat önce alarm, takvimin kendi alarmı); borç ve onay istekleri uygulama içi listede. Mağaza aşamasında gerçek anlık bildirimler yeniden değerlendirilir |
 | Zamanlanmış işler | Supabase veritabanı zamanlayıcısı (pg_cron) | Buluşma bitince yoklamayı kapatma, borç oluşturma, iki buluşmada kapanmayan borcu katlama |
 | Derleme ve dağıtım | EAS Build + TestFlight | Şimdilik sadece Expo Go ile test; mağaza aşamasında iOS için TestFlight, Android için kurulum linki |
 
@@ -95,7 +96,7 @@ Uygulama Expo (React Native) ile tek kodla iOS ve Android için yazılır, arka 
 
 - Yönetici buluşma yerini uygulama içindeki haritada iğne bırakarak ya da adres arayarak seçer; iğnenin çevresinde 100 m'lik yoklama alanı daire olarak görünür.
 - Üye, buluşma detayında yeri küçük bir haritada görür ve "Yol tarifi al" butonuyla telefonundaki Apple Haritalar ya da Google Haritalar uygulamasına geçer.
-- Harita react-native-maps ile gösterilir (Expo Go'da anahtar gerektirmez). Adres arama ücretsiz OpenStreetMap (Nominatim) ile yapılır; kart veya ücretli anahtar isteyen bir harita servisi kullanılmaz. Mağaza aşamasında Android harita gösterimi için ücretsiz çözüm yeniden değerlendirilir.
+- Harita, OpenStreetMap kaplamaları ve Leaflet ile (uygulama içi WebView üzerinde) gösterilir; react-native-maps (Google Haritalar) Android'de ücretsiz planda bile kredi kartlı bir API anahtarı istediği için kullanılmaz. Adres arama ücretsiz OpenStreetMap (Nominatim) ile yapılır; kart veya ücretli anahtar isteyen bir harita servisi kullanılmaz.
 
 **Ücretsiz plan sınırları**
 
@@ -121,7 +122,8 @@ Uygulama Expo (React Native) ile tek kodla iOS ve Android için yazılır, arka 
 3. Ceza kurallarını seçer: ikram, bağış ya da kademeli. İkram listesini belirler (tatlı, çiğköfte, yemek vb.). Bağış seçilirse STK sorumlusunu atar.
 4. Davet linkini WhatsApp grubuna gönderir.
 5. Buluşma yeri değişirse haritada yeni yeri işaretler; uygulama "Sürekli mi, sadece bu hafta mı?" diye sorar, değişiklik uygulama içi bildirim listesine düşer ve uygulama "WhatsApp grubuna da gönder" butonuyla hazır bir mesaj önerir (ör. "Bu perşembe buluşma [yer adı] adresinde, saat 20:00. Konum: [harita linki]"). Saat değişikliğinde de aynı buton çıkar. Konumu doğrulanamayan üye olursa yedek QR'ı açar.
-6. Devamsızlık eşiğine yaklaşan üye için uyarı alır; eşiğe ulaşan üyeyi gruptan çıkarmayı onaylar ya da bir şans daha verir.
+6. İsterse bir buluşma için bir üyeyi "Bu haftanın sorumlusu" atar; o kişi sadece o buluşmada yedek QR gösterebilir ve yeri/saati "sadece bu hafta" değiştirebilir.
+7. Devamsızlık eşiğine yaklaşan üye için uyarı alır; eşiğe ulaşan üyeyi gruptan çıkarmayı onaylar ya da bir şans daha verir.
 
 **Üye**
 
@@ -184,7 +186,7 @@ Renk çevirisi: referanstaki yeşil ana buton ve seçili sekme → Koyu mercan #
 1. Giriş ve açık rıza.
 2. Gruplarım.
 3. Grup ana sayfası: sıradaki buluşma, grup akışı, açık borçlar, aylık ve yıllık devam skoru listesi.
-4. Buluşma detayı: katılım listesi, "Geldim" butonu (üye), yedek QR (yönetici).
+4. Buluşma detayı: katılım listesi, "Geldim" butonu (üye), yedek QR (yönetici ya da o haftanın sorumlusu), "Bu haftanın sorumlusu" atama (yönetici).
 5. Mazeret bildir.
 6. Borcum: tür, kapatma adımları, kamera veya dekont yükleme.
 7. Onay bekleyenler (üye onayı ve STK onayı).
@@ -200,7 +202,7 @@ Supabase'de (PostgreSQL) yedi tablo yeterlidir. Kullanıcı kendi grubunun dış
 | profiles | id (Supabase Auth kullanıcısı), ad, soyad, e-posta, profilFotoğrafıUrl (isteğe bağlı), yaşBeyanı (18+), bildirimTercihi, oluşturulma tarihi | E-posta sadece kullanıcının kendisine görünür |
 | groups | ad, yöneticiId, buluşmaKuralı (gün, saat, süre), mazeretSüresi (24 / 3 saat), ikramOnayŞekli (yönetici / atanan üye / onaysız), onaycıId, konum (enlem, boylam, yarıçapMetre), ikramListesi, ardışıkDevamsızlıkEşiği, toplamDevamsızlıkEşiği, cezaKuralı (ikram / bağış / kademeli), stkSorumlusuId | Davet kodu da burada tutulur |
 | group_members | groupId, userId, rol (yönetici / üye / STK sorumlusu), katılma tarihi | Grup üyeliği ve roller |
-| meetings | groupId, başlangıç, bitiş, buHaftaKonum (varsa grup konumunun yerine geçer), yedekQrKodu, durum (açık / kapandı) | Zamanlayıcı (pg_cron) buluşma bitince durumu kapatır |
+| meetings | groupId, başlangıç, bitiş, buHaftaKonum (varsa grup konumunun yerine geçer), yedekQrKodu (30 saniyede bir değişen gizli tohumdan türetilir, saklanmaz), durum (açık / kapandı), sorumluId (isteğe bağlı, "bu haftanın sorumlusu") | Zamanlayıcı (pg_cron) buluşma bitince durumu kapatır; yeni hafta yeni satır olduğu için sorumluId de o haftaya özeldir |
 | attendance | meetingId, userId, durum (geldi / mazeretli / gelmedi), yöntem (konum / QR), mazeretMetni, acilDurum, mazeretOyları | Gelmedi kaydı borç oluşturur |
 | debts | groupId, userId, meetingId, tür (ikram / bağış), ikramSeçimi, kademe, katsayı (1 / 2), açıkKaldığıBuluşmaSayısı, durum (açık / onay bekliyor / kapandı / reddedildi), kanıtUrl, bağışTutarı, projeId, onaylayanlar | Kapanınca grup akışına düşer |
 | projects | groupId, ad, açıklama, kapsam (yurt içi / yurt dışı), iban, aktif | Sadece STK sorumlusu düzenler |

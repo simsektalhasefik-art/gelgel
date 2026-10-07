@@ -154,6 +154,16 @@ export function GrupAyarlariScreen({ navigation, route }: Props) {
 
       {isAdmin && (
         <View style={styles.regenerateWrap}>
+          <SecondaryButton
+            label="Buluşma ayarları"
+            onPress={() => navigation.navigate('BulusmaAyarlari', { groupId })}
+            disabled={busy}
+          />
+        </View>
+      )}
+
+      {isAdmin && (
+        <View style={styles.regenerateWrap}>
           <SecondaryButton label="Davet kodunu yenile" onPress={handleRegenerateCode} disabled={busy} />
         </View>
       )}

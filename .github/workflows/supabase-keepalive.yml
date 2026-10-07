@@ -1,0 +1,21 @@
+name: Supabase'i uyanık tut
+
+# Ücretsiz Supabase projeleri bir hafta hareketsiz kalınca duraklatılıyor. Bu iş her gün
+# veritabanına ücretsiz, anonim bir istek atarak projeyi uyanık tutar; kart ya da ücretli
+# bir şey gerektirmez. apikey, uygulamanın kendisinde de bulunan herkese açık (anon) bir
+# anahtardır, gizli değildir; gerçek veriler satır düzeyi güvenlik (RLS) ile korunur.
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase'e istek at
+        run: |
+          curl -sS -o /dev/null -w "HTTP %{http_code}\n" \
+            "https://uctwoiwzvutoxlbachvm.supabase.co/rest/v1/groups?select=id&limit=1" \
+            -H "apikey: sb_publishable_Axt-J0wno2xoKUMkR91yKw_IctJVHx9" \
+            -H "Authorization: Bearer sb_publishable_Axt-J0wno2xoKUMkR91yKw_IctJVHx9"

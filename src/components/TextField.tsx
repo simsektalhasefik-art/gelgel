@@ -6,7 +6,7 @@ import { colors } from '../theme/colors';
 import { fonts } from '../theme/typography';
 
 type Props = TextInputProps & {
-  label: string;
+  label?: string;
   errorText?: string | null;
   rightAccessory?: ReactNode;
 };
@@ -14,7 +14,7 @@ type Props = TextInputProps & {
 export function TextField({ label, style, errorText, rightAccessory, ...rest }: Props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
       <View style={styles.inputRow}>
         <TextInput
           placeholderTextColor={colors.textSecondary}

@@ -53,3 +53,30 @@ Her faz bitince Claude Code bu dosyaya şu başlıklarla ekleme yapar: yapılanl
 - Gruptan ayrılan üyenin açık borcu ne olacağı kuralı (yöneticinin silmesi ya da kayıtlı tutması) henüz yok; borç kavramı Faz 4'te geldiğinde eklenecek.
 - Hesabını silen yöneticinin yöneticiliğinin en eski üyeye otomatik geçmesi kuralı henüz yok; hesap silme zaten mağaza aşamasına kadar kapsam dışı (CLAUDE.md).
 - Faz 1'den kalan aydınlatma metni yer tutucusu ve Gelgel adı kontrolü hâlâ açık.
+
+## Faz 3 – Buluşma ve yoklama (2026-10-07)
+
+**Yapılanlar**
+- `groups` tablosuna buluşma günü/saati/süresi ve konum (enlem, boylam, 100 m yarıçap, adres) eklendi; yeni `meetings` ve `attendance` tabloları (`supabase/migrations/20261007130000...` ve devamı). pg_cron (15 dakikada bir) hem sıradaki buluşmayı otomatik oluşturuyor hem süresi geçeni kapatıp gelmeyenleri "gelmedi" işaretliyor (borç oluşturmuyor, bu Faz 4'te gelecek). Saat hesapları Europe/Istanbul'a göre; pg_cron UTC çalıştığı için bu özellikle veritabanında doğrudan test edilerek doğrulandı.
+- Buluşma ayarları ekranı: gün/saat/süre seçimi, haritadan yer seçme, "Şu an buradayım, burayı seç" (birincil) ve adres arama (Nominatim, ikincil, sadece "Ara"ya basınca). Var olan bir kural değiştirilirken "Sürekli mi, sadece bu hafta mı?" sorulur.
+- Grup ana sayfasında "Sıradaki buluşma" kartı; buluşma detayında küçük harita, "Yol tarifi al", katılım listesi, "Geldim" butonu (buluşma başlamadan 30 dk önce açılır, bitince kapanır).
+- "Geldim": konum tamamen sunucuda doğrulanıyor — telefon ham enlem/boylamı güvenli bir veritabanı fonksiyonuna gönderiyor, fonksiyon mesafeyi hesaplayıp sadece sonucu (geldi/gelmedi, yöntem) yazıyor; koordinat hiçbir tabloya yazılmıyor (KVKK). Android'de sahte konum reddediliyor.
+- Yedek QR: kod hiçbir yerde sabit tutulmuyor, her buluşmaya özel gizli bir tohumdan ve 30 saniyelik zaman diliminden anlık hesaplanıyor; yönetici (ya da o haftanın sorumlusu) "Yedek QR göster" ile gösterir, üye "QR ile yoklama ver" ile kamerayla okutur.
+- "Bu haftanın sorumlusu": yönetici buluşma detayından bir üyeyi atayabiliyor; sorumlu sadece o buluşma için yedek QR'ı gösterebiliyor ve yeri/saati "sadece bu hafta" değiştirebiliyor, grup kurallarına/üyelere/yöneticiliğe dokunamıyor. Yetki kontrolleri tamamen veritabanı fonksiyonlarında; buluşma kapanınca (yeni hafta yeni satır olduğundan) sorumluluk kendiliğinden düşüyor.
+- Hatırlatma: "Takvimime ekle" butonu (grup ana sayfası + buluşma detayı) telefonun kendi takvimine haftalık tekrarlayan bir etkinlik ekliyor (1 gün ve 2 saat önce alarm, notunda adres + harita linki); eklenen etkinliğin kimliği telefonda saklanıp uygulama her açıldığında buluşma değiştiyse sessizce güncelleniyor.
+- "WhatsApp grubuna da gönder" butonu, buluşma yeri/saati değişince hazır bir mesaj paylaşıma açıyor.
+- Ücretsiz Supabase projesini uyanık tutan günlük bir GitHub Actions dosyası hazırlandı (`.github/workflows/supabase-keepalive.yml`); henüz bir GitHub deposuna bağlanmadı (bkz. bilinen eksikler).
+- Telefonda test sonrası birkaç düzeltme yapıldı: `SecondaryButton` metni alt satıra kayınca ortalanmıyordu (artık ortalı), Buluşma detayı ekranında kenar boşluğu bir ara iki kez uygulanıyordu (düzeltildi), Buluşma detayı'ndaki üç buton yan yana sıkışmak yerine alt alta tam genişlikte gösteriliyor.
+
+**Alınan kararlar**
+- **Harita:** react-native-maps (Google Haritalar) Android'de ücretsiz planda bile kredi kartlı bir API anahtarı istediği için (proje kuralına aykırı) tamamen kaldırıldı; yerine ücretsiz OpenStreetMap + Leaflet (uygulama içi WebView) kullanıldı, iOS ve Android'de aynı görünüyor, anahtar gerekmiyor. Yer seçimi de "dokunup iğne bırakma" yerine "haritayı sürükle, iğne ortada sabit dursun" modeline çevrildi (WebView içinde dokunma/sürükleme ayrımı güvenilir değildi, iğne zor taşınıyordu).
+- **Bildirimler:** expo-notifications, Android'de Expo Go'da (SDK 53+) paket içe aktarılır aktarılmaz çöktüğü için (push token kaydı zorunlu ve kapatılamıyor) tamamen kaldırıldı. Yerine telefonun kendi takvimi kullanıldı; `expo-calendar`'ın YENİ API'si de Expo Go'da çalışmadığından, paketin uzun süredir Expo Go'da sorunsuz çalışan eski ("legacy") API'si (`expo-calendar/legacy`) tercih edildi. Gerçek anlık bildirimler mağaza aşamasında (gerçek derleme) yeniden değerlendirilecek.
+- Yedek QR kodunu üreten gizli tohum (`qr_sir`) sütunu, güvenli fonksiyonlar dışında (üye dahil) hiçbir istemciye açılmıyor; bunu sütun bazlı veritabanı izniyle sağlarken ilk denemede (sütun bazlı `revoke`) yetersiz kaldığı görüldü — Supabase'in geniş tablo düzeyi izni öncelik aldığından önce tablo düzeyi SELECT tamamen kaldırılıp sadece güvenli sütunlara izin verilerek düzeltildi.
+- CLAUDE.md'ye not düşüldü: bildirimler artık takvim üzerinden, mağaza aşamasında gerçek bildirimler yeniden değerlendirilecek.
+
+**Bilinen eksikler**
+- Uyanık tutma zamanlayıcısı dosyası hazır ama bir GitHub deposuna bağlanmadı; kullanıcının onayıyla (gizli/private depo) en kısa sürede bağlanmalı, yoksa ücretsiz Supabase projesi bir hafta hareketsiz kalırsa duraklayabilir.
+- Gerçek anlık bildirimler (push) Expo Go'da mümkün değil; mağaza aşamasında yeniden değerlendirilecek, şimdilik takvim hatırlatması yeterli kabul edildi.
+- Davet linkinin farklı Wi-Fi'lerde güvenilirliği hâlâ Faz 6'da yeniden değerlendirilecek (Faz 2'den kalan not).
+- Gruptan ayrılan üyenin açık borcu kuralı henüz yok (Faz 4'te borç kavramıyla birlikte gelecek).
+- Faz 1'den kalan aydınlatma metni yer tutucusu ve Gelgel adı kontrolü hâlâ açık.

@@ -11,7 +11,7 @@ Tüm gereksinimler `docs/gelgel-belgeleri.md` dosyasındadır. Bölüm numaralar
 - Supabase (ücretsiz plan): Auth, PostgreSQL veritabanı, Storage, veritabanı zamanlayıcısı (pg_cron). Firebase KULLANILMAZ.
 - Giriş pilotta sadece e-posta ve şifreyle (Supabase Auth). Telefonla ve Apple ile giriş mağaza aşamasında eklenecek.
 - Expo Go'da çalışmayan yerel paketler kullanılmaz; @supabase/supabase-js kullanılır.
-- Bildirimler: buluşma hatırlatmaları expo-notifications ile telefonda zamanlanan yerel bildirimler; borç ve onay istekleri uygulama içi bildirim listesinde.
+- Bildirimler: expo-notifications Android'de Expo Go'da çalışmıyor (paket içe aktarılır aktarılmaz çöküyor); buluşma hatırlatmaları bunun yerine "Takvimime ekle" butonuyla telefonun kendi takvimine (expo-calendar/legacy) tekrarlayan etkinlik olarak ekleniyor, alarmlar (1 gün ve 2 saat önce) takvimin kendi alarmları. Mağaza aşamasında (Expo Go'dan çıkılıp gerçek bir derleme yapılınca) gerçek anlık bildirimler yeniden değerlendirilir. Borç ve onay istekleri uygulama içi bildirim listesinde.
 - Konum için expo-location, sadece "uygulamayı kullanırken" izni. Arka planda konum takibi YAPILMAZ.
 
 ## Supabase kurulumu (Claude Code yapar)

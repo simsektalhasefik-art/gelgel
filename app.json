@@ -30,7 +30,26 @@
           "cameraPermission": "Gelgel, profil fotoğrafı çekebilmen için kamerana erişmek istiyor.",
           "photosPermission": "Gelgel, profil fotoğrafı seçebilmen için galerine erişmek istiyor."
         }
-      ]
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermissionDescription": "Gelgel, \"Geldim\" dediğinde buluşma noktasında olduğunu doğrulamak için konumuna erişmek istiyor."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Gelgel, yedek QR koduyla yoklama verebilmen için kamerana erişmek istiyor."
+        }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "Gelgel, buluşmayı takvimine ekleyebilmen için takvimine erişmek istiyor."
+        }
+      ],
+      "@react-native-community/datetimepicker"
     ]
   }
 }

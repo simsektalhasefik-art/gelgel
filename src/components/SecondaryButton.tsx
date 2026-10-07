@@ -30,7 +30,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.coralLight,
     borderRadius: 999,
     paddingVertical: 16,
+    paddingHorizontal: 16,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   pressed: {
     opacity: 0.85,
@@ -42,5 +44,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemiBold,
     fontSize: 16,
     color: colors.coralDark,
+    textAlign: 'center',
   },
 });

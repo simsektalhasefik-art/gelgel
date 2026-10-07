@@ -5,6 +5,13 @@ export type GroupSummary = {
   ad: string;
   invite_code: string;
   created_at: string;
+  bulusma_gunu: number | null;
+  bulusma_saati: string | null;
+  bulusma_suresi_dakika: number;
+  enlem: number | null;
+  boylam: number | null;
+  yaricap_metre: number;
+  adres_metni: string | null;
 };
 
 export type GroupRole = 'yonetici' | 'uye' | 'stk_sorumlusu';
