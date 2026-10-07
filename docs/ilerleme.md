@@ -75,8 +75,9 @@ Her faz bitince Claude Code bu dosyaya şu başlıklarla ekleme yapar: yapılanl
 - CLAUDE.md'ye not düşüldü: bildirimler artık takvim üzerinden, mağaza aşamasında gerçek bildirimler yeniden değerlendirilecek.
 
 **Bilinen eksikler**
-- Uyanık tutma zamanlayıcısı dosyası hazır ama bir GitHub deposuna bağlanmadı; kullanıcının onayıyla (gizli/private depo) en kısa sürede bağlanmalı, yoksa ücretsiz Supabase projesi bir hafta hareketsiz kalırsa duraklayabilir.
+- ~~Uyanık tutma zamanlayıcısı bir GitHub deposuna bağlanmadı~~ → **Çözüldü (2026-10-07):** proje `https://github.com/simsektalhasefik-art/gelgel` (gizli depo) ile bağlandı, `.env` depoya girmedi; "Supabase'i uyanık tut" iş akışı elle bir kez çalıştırılıp yeşil (başarılı) olduğu doğrulandı.
 - Gerçek anlık bildirimler (push) Expo Go'da mümkün değil; mağaza aşamasında yeniden değerlendirilecek, şimdilik takvim hatırlatması yeterli kabul edildi.
 - Davet linkinin farklı Wi-Fi'lerde güvenilirliği hâlâ Faz 6'da yeniden değerlendirilecek (Faz 2'den kalan not).
 - Gruptan ayrılan üyenin açık borcu kuralı henüz yok (Faz 4'te borç kavramıyla birlikte gelecek).
-- Faz 1'den kalan aydınlatma metni yer tutucusu ve Gelgel adı kontrolü hâlâ açık.
+- **Pilottan (Faz 6) önce zorunlu:** Faz 1'den kalan aydınlatma metni yer tutucusu (`src/content/aydinlatmaMetni.ts` içindeki `[VERİ SORUMLUSU ADI VE İLETİŞİM]`) gerçek bilgiyle değiştirilmeli.
+- **Pilottan (Faz 6) önce zorunlu:** Gelgel adı için TÜRKPATENT kontrolü henüz yapılmadı (kullanıcının kendisinin yapacağı adım, Claude Code dışı).
